@@ -1,0 +1,197 @@
+/* ==========================================================================
+   Scheduler Core v3.0 — globals.css
+   Next.js global styles. No Tailwind PostCSS dependency.
+   All design tokens are kept in sync with /styles.css.
+   ========================================================================== */
+
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* ══════════════════════════════════════════════
+   DESIGN TOKENS — Dark Mode (default)
+   Matches :root / [data-theme="dark"] in styles.css
+   ══════════════════════════════════════════════ */
+:root {
+  /* Surfaces */
+  --bg-root: #09090B;
+  --bg-surface: #121217;
+  --bg-surface-elevated: #18181F;
+  --bg-subtle: #1E1E26;
+  --bg-input: #121217;
+
+  /* Borders */
+  --border-subtle: #27272A;
+  --border-medium: #3F3F46;
+  --border-bright: #52525B;
+
+  /* Typography */
+  --text-main: #FAFAFA;
+  --text-muted: #A1A1AA;
+  --text-dim: #71717A;
+  --text-faint: #52525B;
+
+  /* Accent — Electric Cyan */
+  --accent-cyan: #00F0FF;
+  --accent-cyan-dim: #00C8D6;
+  --accent-cyan-glow: rgba(0, 240, 255, 0.25);
+  --accent-cyan-text: #09090B;
+
+  /* Accent — Vivid Lime */
+  --accent-lime: #22C55E;
+  --accent-lime-dim: #16A34A;
+  --accent-lime-glow: rgba(34, 197, 94, 0.22);
+  --accent-lime-faint: rgba(34, 197, 94, 0.12);
+
+  /* Accent — Radiant Coral/Pink */
+  --accent-pink: #FF2E93;
+  --accent-pink-dim: #F43F5E;
+  --accent-pink-glow: rgba(255, 46, 147, 0.30);
+
+  /* Gantt / Playback */
+  --playback-bg: #0C0C10;
+  --playback-border: #27272A;
+  --track-bg: #14141B;
+  --grid-major: #3F3F46;
+  --grid-minor: rgba(63, 63, 70, 0.4);
+  --time-tick: #71717A;
+
+  /* Status */
+  --status-met: #22C55E;
+  --status-missed: #F43F5E;
+
+  /* Typography stacks */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, Menlo, Consolas, monospace;
+
+  /* Layout dimensions */
+  --header-height: 56px;
+  --metrics-height: 80px;
+  --drawer-width: 280px;
+  --bottom-panel-height: 185px;
+  --bottom-bar-height: 36px;
+  --playback-bar-height: 44px;
+  --algo-bar-height: 38px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.40), 0 0 0 1px #27272A;
+  --shadow-glow: 0 0 15px rgba(0, 240, 255, 0.18);
+  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 0 1px #27272A;
+  --shadow-modal: 0 20px 48px rgba(0, 0, 0, 0.80), 0 0 0 1px #3F3F46;
+
+  /* Transitions */
+  --t-fast: all 0.14s cubic-bezier(0.4, 0, 0.2, 1);
+  --t-med: all 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ══════════════════════════════════════════════
+   DESIGN TOKENS — Light Mode
+   Triggered by .light class on <html> or [data-theme="light"]
+   ══════════════════════════════════════════════ */
+.light,
+[data-theme="light"] {
+  --bg-root: #FAFAFA;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #F4F4F5;
+  --bg-subtle: #E4E4E7;
+  --bg-input: #FFFFFF;
+
+  --border-subtle: #E4E4E7;
+  --border-medium: #D4D4D8;
+  --border-bright: #A1A1AA;
+
+  --text-main: #09090B;
+  --text-muted: #52525B;
+  --text-dim: #71717A;
+  --text-faint: #A1A1AA;
+
+  --accent-cyan: #00B4D8;
+  --accent-cyan-dim: #0096C7;
+  --accent-cyan-glow: rgba(0, 180, 216, 0.20);
+  --accent-cyan-text: #FFFFFF;
+
+  --accent-lime: #16A34A;
+  --accent-lime-dim: #15803D;
+  --accent-lime-glow: rgba(22, 163, 74, 0.20);
+  --accent-lime-faint: rgba(22, 163, 74, 0.12);
+
+  --accent-pink: #E11D48;
+  --accent-pink-dim: #BE123C;
+  --accent-pink-glow: rgba(225, 29, 72, 0.25);
+
+  --playback-bg: #18181B;
+  --playback-border: #27272A;
+  --track-bg: #F4F4F5;
+  --grid-major: #CBD5E1;
+  --grid-minor: rgba(203, 213, 225, 0.60);
+  --time-tick: #64748B;
+
+  --status-met: #16A34A;
+  --status-missed: #E11D48;
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 0 0 1px #E4E4E7;
+  --shadow-glow: 0 0 12px rgba(0, 180, 216, 0.15);
+  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.08), 0 0 0 1px #E4E4E7;
+  --shadow-modal: 0 20px 48px rgba(0, 0, 0, 0.16), 0 0 0 1px #D4D4D8;
+}
+
+/* ══════════════════════════════════════════════
+   GLOBAL RESETS & BASE
+   ══════════════════════════════════════════════ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Zero page scroll — only isolated child panels scroll. */
+html,
+body {
+  height: 100vh;
+  width: 100vw;
+  max-height: 100vh;
+  max-width: 100vw;
+  overflow: hidden !important;
+  background-color: var(--bg-root);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ══════════════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+   ══════════════════════════════════════════════ */
+.num,
+.tabular-nums {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ══════════════════════════════════════════════
+   SCROLLBAR — Thin, unobtrusive, for child panels only
+   ══════════════════════════════════════════════ */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-medium, rgba(63, 63, 70, 0.5)) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--border-medium, rgba(63, 63, 70, 0.5));
+  border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--border-bright, rgba(82, 82, 91, 0.7));
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}

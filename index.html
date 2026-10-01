@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Ultra-premium C-powered Operating System Job Scheduling & Visualization Platform inspired by Linear, Vercel, and Raycast.">
+    <title>Scheduler Core v1.0 | High-Performance OS Visualizer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Master 100vh Single-Screen Root Shell -->
+    <div class="scheduler-shell">
+
+        <!-- 1. Global Fixed Header (56px) -->
+        <header class="global-header">
+            <div class="header-left">
+                <div class="brand-icon-box">
+                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div style="display: flex; align-items: baseline; gap: 0.4rem;">
+                    <span class="brand-text">Scheduler Core</span>
+                    <span class="brand-version">v1.0</span>
+                </div>
+                <div class="wasm-pill">
+                    <span class="wasm-dot"></span>
+                    <span>C11 WASM Engine Active</span>
+                </div>
+            </div>
+
+            <!-- Center: Command Palette Trigger (Cmd + K) -->
+            <button id="btn-trigger-cmd" class="cmd-k-trigger" title="Open Command Palette (Cmd + K)">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <span>Search or command...</span>
+                </div>
+                <span class="cmd-badge">⌘K</span>
+            </button>
+
+            <!-- Right: Actions, Drawer Toggle, Theme, Export -->
+            <div class="header-right">
+                <select id="preset-selector" class="btn-mini" style="height: 30px; padding: 0 0.5rem; font-weight: 600;"
+                    title="Load Sample Preset Workload">
+                    <option value="">⚡ Presets</option>
+                    <option value="classic_textbook">Classic Textbook</option>
+                    <option value="convoy_effect">Convoy Effect (FCFS)</option>
+                    <option value="sjf_starvation">SJF Starvation</option>
+                    <option value="rr_quantum_demo">RR Quantum Effect</option>
+                    <option value="edf_realtime">EDF Real-Time Feasibility</option>
+                </select>
+
+                <!-- Drawer Toggle (Cmd + B) -->
+                <button id="btn-toggle-drawer" class="btn-mini" title="Toggle Config Drawer (Cmd + B)">
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h8m-8 6h16" />
+                    </svg>
+                    <span>Config</span>
+                    <span class="cmd-badge" style="font-size: 0.6rem;">⌘B</span>
+                </button>
+
+                <!-- Dark / Light Theme Toggle -->
+                <button id="theme-toggle-btn" class="btn-mini" style="width: 32px; padding: 0;" title="Toggle Theme">
+                    🌙
+                </button>
+
+                <!-- Export Menu Actions -->
+                <button id="btn-export-csv-results" class="btn-mini" title="Export Results CSV">CSV</button>
+                <button id="btn-export-json" class="btn-mini" title="Export Full JSON Trace">{ } JSON</button>
+                <button id="btn-print-report" class="btn-mini primary" title="Printable PDF Report">PDF</button>
+            </div>
+        </header>
+
+        <!-- 2. Top Metrics Performance Strip (80px) -->
+        <section class="metrics-strip">
+            <!-- Card 1: Average Waiting Time -->
+            <div class="kpi-compact-card">
+                <div class="kpi-top">
+                    <span class="kpi-tag">Avg Waiting Time</span>
+                    <span id="badge-best-awt" class="kpi-best-pill" style="display: none;">BEST</span>
+                </div>
+                <div class="kpi-val-row">
+                    <span id="kpi-awt" class="kpi-number">0.00</span>
+                    <span class="kpi-unit">units</span>
+                </div>
+                <div class="kpi-stripe stripe-indigo"></div>
+            </div>
+
+            <!-- Card 2: Average Turnaround Time -->
+            <div class="kpi-compact-card">
+                <div class="kpi-top">
+                    <span class="kpi-tag">Avg Turnaround Time</span>
+                    <span id="badge-best-att" class="kpi-best-pill" style="display: none;">BEST</span>
+                </div>
+                <div class="kpi-val-row">
+                    <span id="kpi-att" class="kpi-number">0.00</span>
+                    <span class="kpi-unit">units</span>
+                </div>
+                <div class="kpi-stripe stripe-violet"></div>
+            </div>
+
+            <!-- Card 3: System Throughput -->
+            <div class="kpi-compact-card">
+                <div class="kpi-top">
+                    <span class="kpi-tag">System Throughput</span>
+                    <span id="badge-best-tp" class="kpi-best-pill" style="display: none;">OPTIMAL</span>
+                </div>
+                <div class="kpi-val-row">
+                    <span id="kpi-throughput" class="kpi-number">0.000</span>
+                    <span class="kpi-unit">jobs/sec</span>
+                </div>
+                <div class="kpi-stripe stripe-cyan"></div>
+            </div>
+
+            <!-- Card 4: CPU Utilization -->
+            <div class="kpi-compact-card">
+                <div class="kpi-top">
+                    <span class="kpi-tag">CPU Utilization</span>
+                    <span id="badge-best-util" class="kpi-best-pill" style="display: none;">OPTIMAL</span>
+                </div>
+                <div class="kpi-val-row">
+                    <span id="kpi-util" class="kpi-number">0.0%</span>
+                </div>
+                <div class="kpi-stripe stripe-emerald"></div>
+            </div>
+        </section>
+
+        <!-- 3. Main Workspace Area (calc(100vh - 136px)) -->
+        <div class="workspace-area">
+
+            <!-- Left: Collapsible Job Configurator Drawer (280px <-> 0px) -->
+            <aside id="config-drawer" class="config-drawer">
+                <div class="drawer-inner">
+                    <!-- Drawer Toolbar -->
+                    <div class="drawer-header">
+                        <div class="drawer-title-row">
+                            <span class="drawer-title">Workload Matrix</span>
+                            <span id="drawer-job-count" class="brand-version">4 jobs</span>
+                        </div>
+                        <div class="drawer-quick-actions">
+                            <button id="btn-add-job" class="btn-mini primary">+ Add Job</button>
+                            <button id="btn-open-bulk-modal" class="btn-mini">CSV/Paste</button>
+                            <button id="btn-open-random-modal" class="btn-mini">🎲 Random</button>
+                            <button id="btn-drawer-presets" class="btn-mini" onclick="document.getElementById('preset-selector').focus(); document.getElementById('preset-selector').click();">⚡ Presets</button>
+                        </div>
+                    </div>
+
+                    <!-- Isolated Scrollable Jobs Virtual List -->
+                    <div id="drawer-jobs-list" class="drawer-jobs-scroll">
+                        <!-- Populated dynamically by app.js -->
+                    </div>
+
+                    <!-- Inline Validation Notice -->
+                    <div id="drawer-validation" class="drawer-validation-bar" style="display: none;">
+                        <span>⚠️ Burst time must be ≥ 1</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Center Stage: Flex-grow 1, min-w-0 -->
+            <main class="center-stage">
+
+                <!-- Top: Algorithm Selector Pill Strip + Parameters -->
+                <div class="algo-strip-bar">
+                    <div class="algo-pill-group">
+                        <button class="algo-pill-btn" data-algo="FCFS">FCFS</button>
+                        <button class="algo-pill-btn" data-algo="SJF">SJF (NP)</button>
+                        <button class="algo-pill-btn" data-algo="SRTF">SRTF (Preemptive)</button>
+                        <button class="algo-pill-btn active" data-algo="RR">Round Robin</button>
+                        <button class="algo-pill-btn" data-algo="PRIORITY_NP">Priority (NP)</button>
+                        <button class="algo-pill-btn" data-algo="PRIORITY_P">Priority (P)</button>
+                        <button class="algo-pill-btn" data-algo="EDF_NP">EDF (NP)</button>
+                        <button class="algo-pill-btn" data-algo="EDF_P">EDF (P)</button>
+                    </div>
+
+                    <div class="algo-params-row">
+                        <span id="param-group-quantum" style="display: flex; align-items: center; gap: 0.3rem;">
+                            <label for="param-quantum" style="font-family: var(--font-mono);">q=</label>
+                            <input type="number" id="param-quantum" min="1" value="2" class="field-input"
+                                style="width: 44px; text-align: center;">
+                        </span>
+                        <span id="param-group-cs" style="display: flex; align-items: center; gap: 0.3rem;">
+                            <label for="param-context-switch" style="font-family: var(--font-mono);">cs=</label>
+                            <input type="number" id="param-context-switch" min="0" value="0" class="field-input"
+                                style="width: 44px; text-align: center;">
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Gantt Canvas Container with Dynamic Fit-to-Width Scaling -->
+                <div id="gantt-chart-container" class="gantt-canvas-wrap">
+                    <!-- SVG timeline generated by gantt.js -->
+                </div>
+
+                <!-- Integrated Timeline Playback Bar (42px) -->
+                <div class="playback-bar-strip">
+                    <div class="playback-btns-group">
+                        <button id="btn-stop-playback" class="btn-ctrl" title="Reset to t=0">⏹</button>
+                        <button id="btn-step-prev" class="btn-ctrl" title="Step Back (Left Arrow)">⏮</button>
+                        <button id="btn-play-pause" class="btn-ctrl primary" title="Play/Pause (Space)">▶ Play</button>
+                        <button id="btn-step-next" class="btn-ctrl" title="Step Forward (Right Arrow)">⏭</button>
+                        <span id="playback-current-time" class="clock-indicator">t = 0</span>
+                    </div>
+
+                    <!-- Scrubber Slider -->
+                    <div class="scrubber-zone">
+                        <span
+                            style="font-size: 0.68rem; font-family: var(--font-mono); color: var(--text-dim);">0</span>
+                        <input type="range" id="playback-scrubber" min="0" max="100" value="0" class="range-scrubber"
+                            aria-label="Playback Timeline Scrubber">
+                        <span id="playback-max-time"
+                            style="font-size: 0.68rem; font-family: var(--font-mono); color: var(--text-dim);">0</span>
+                    </div>
+
+                    <!-- Speed Multipliers & Live CPU State Indicator -->
+                    <div style="display: flex; align-items: center; gap: 0.65rem;">
+                        <div class="speed-selector-group">
+                            <button class="speed-opt-btn" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt-btn active" data-speed="1.0">1x</button>
+                            <button class="speed-opt-btn" data-speed="2.0">2x</button>
+                            <button class="speed-opt-btn" data-speed="5.0">5x</button>
+                        </div>
+
+                        <!-- Active CPU status badge -->
+                        <div
+                            style="display: flex; align-items: center; gap: 0.4rem; padding: 2px 8px; border-radius: 6px; background: var(--bg-panel); border: 1px solid var(--border-subtle); font-family: var(--font-mono); font-size: 0.72rem;">
+                            <span id="live-cpu-status"
+                                style="width: 6px; height: 6px; border-radius: 9999px; background: #10B981;"></span>
+                            <span
+                                style="color: var(--text-dim); text-transform: uppercase; font-size: 0.62rem;">CPU:</span>
+                            <strong id="live-cpu-job-name" style="color: var(--text-main);">P1</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Resizable / Collapsible Results Panel (Max: 185px) -->
+                <section id="bottom-panel" class="bottom-results-panel">
+                    <div class="bottom-tab-bar">
+                        <div class="tab-toggle-pill">
+                            <button id="tab-btn-matrix" class="tab-btn active">Job Matrix</button>
+                            <button id="tab-btn-benchmark" class="tab-btn">Benchmark Matrix (8)</button>
+                        </div>
+                        <button id="btn-toggle-bottom" class="btn-toggle-collapse"
+                            title="Collapse / Expand Results Panel">
+                            ▼
+                        </button>
+                    </div>
+
+                    <!-- Isolated Scrollable Table for Job Matrix -->
+                    <div id="view-job-matrix" class="bottom-table-scroll">
+                        <table class="compact-matrix-table">
+                            <thead>
+                                <tr>
+                                    <th>Job</th>
+                                    <th>Arrival</th>
+                                    <th>Burst</th>
+                                    <th>Priority</th>
+                                    <th>First Start</th>
+                                    <th>Completion</th>
+                                    <th>TAT</th>
+                                    <th>WT</th>
+                                    <th>Response</th>
+                                    <th>Deadline Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="results-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Isolated Scrollable Table for Benchmark Comparison -->
+                    <div id="view-benchmark-matrix" class="bottom-table-scroll" style="display: none;">
+                        <table class="compact-matrix-table">
+                            <thead>
+                                <tr>
+                                    <th>Algorithm</th>
+                                    <th>Avg Waiting (AWT)</th>
+                                    <th>Avg Turnaround (ATT)</th>
+                                    <th>Avg Response</th>
+                                    <th>CPU Utilization</th>
+                                    <th>Throughput</th>
+                                    <th>Context Switches</th>
+                                </tr>
+                            </thead>
+                            <tbody id="compare-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Quick Command Palette Modal (Cmd + K) -->
+    <div id="cmd-palette-modal" class="cmd-modal-overlay">
+        <div class="cmd-modal-box">
+            <div class="cmd-input-row">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    style="color: var(--text-dim);">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input type="text" id="cmd-palette-input" class="cmd-search-input"
+                    placeholder="Type a command, algorithm, or preset..." autocomplete="off">
+                <span class="cmd-badge">ESC</span>
+            </div>
+            <div id="cmd-palette-list" class="cmd-list-scroll">
+                <!-- Dynamically populated commands -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Paste Modal -->
+    <div id="modal-bulk-paste" class="cmd-modal-overlay">
+        <div class="cmd-modal-box" style="padding: 1.25rem; gap: 0.85rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 700; font-size: 0.95rem;">📋 Bulk Paste Workload</span>
+                <button id="btn-close-bulk-modal" class="btn-mini"
+                    style="font-size: 1rem; width: 26px; height: 26px; padding: 0;">✕</button>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted);">Format:
+                <code>JobName, Arrival, Burst, [Priority], [Deadline]</code>
+            </p>
+            <textarea id="bulk-paste-textarea"
+                style="width: 100%; height: 110px; background: var(--bg-input); border: 1px solid var(--border-subtle); color: var(--text-main); font-family: var(--font-mono); font-size: 0.78rem; padding: 0.5rem; border-radius: 8px; outline: none;"></textarea>
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+                <button id="btn-apply-bulk-paste" class="btn-mini primary" style="padding: 0.4rem 0.85rem;">Apply
+                    Workload</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Random Workload Generator Modal -->
+    <div id="modal-random-gen" class="cmd-modal-overlay">
+        <div class="cmd-modal-box" style="padding: 1.25rem; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 700; font-size: 0.95rem;">🎲 Random Generator</span>
+                <button id="btn-close-random-modal" class="btn-mini"
+                    style="font-size: 1rem; width: 26px; height: 26px; padding: 0;">✕</button>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem;">
+                <span>Job Count (2-20):</span>
+                <input type="number" id="rand-count" class="field-input" min="2" max="20" value="5"
+                    style="width: 50px;">
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem;">
+                <span>Max Arrival:</span>
+                <input type="number" id="rand-max-arrival" class="field-input" min="0" value="10" style="width: 50px;">
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem;">
+                <span>Burst Range:</span>
+                <div style="display: flex; gap: 0.25rem;">
+                    <input type="number" id="rand-min-burst" class="field-input" min="1" value="2" style="width: 44px;">
+                    <span>-</span>
+                    <input type="number" id="rand-max-burst" class="field-input" min="2" value="8" style="width: 44px;">
+                </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
+                <button id="btn-apply-random-gen" class="btn-mini primary"
+                    style="padding: 0.4rem 0.85rem;">Generate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script (ES Module) -->
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>
